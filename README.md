@@ -82,11 +82,10 @@ As a result, all view controllers that are subclassed from BasicViewController a
 All third-party libraries are open-sourced.
 
 In this list there are no frameworks which are used in managers, helpers and extension.
-
-    - `DZNEmptyDataSet` allows to setup customizable views to empty lists;
-    - `CCBottomRefreshControl`. Yes, by default iOS doesn't support infinity scrolling. With this framework we can implement this functionallity in our apps;
-    - `SKPhotoBrowser` is a simple image viewer. I.e. it allows to view fullsize image after tapping on image thumbnail;
-    - `Fabric` and `Crashlytics` allows to send beta versions to testers without TestFlight.
+- `DZNEmptyDataSet` allows to setup customizable views to empty lists;
+- `CCBottomRefreshControl`. Yes, by default iOS doesn't support infinity scrolling. With this framework we can implement this functionallity in our apps;
+- `SKPhotoBrowser` is a simple image viewer. I.e. it allows to view fullsize image after tapping on image thumbnail;
+- `Fabric` and `Crashlytics` allows to send beta versions to testers without TestFlight.
 
 # Requres:
 - `cocoapods` preinstalled
