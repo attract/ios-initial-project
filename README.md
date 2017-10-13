@@ -114,20 +114,21 @@ $ open Podfile
 ```
 Add next lines to your target section:
 
->pod 'Alamofire'
->pod 'SwiftyJSON'
->pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
->pod 'ReachabilitySwift'
->pod 'DZNEmptyDataSet'
->pod 'SDWebImage', '~>3.8'
->pod 'CCBottomRefreshControl'
->pod 'SKPhotoBrowser'
->pod 'BRYXBanner'
->pod 'SCLAlertView'
->pod 'Fabric'
->pod 'Crashlytics'
->pod 'BulletinBoard', :git => 'https://github.com/alexaubry/BulletinBoard.git'
-
+```
+pod 'Alamofire'
+pod 'SwiftyJSON'
+pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
+pod 'ReachabilitySwift'
+pod 'DZNEmptyDataSet'
+pod 'SDWebImage', '~>3.8'
+pod 'CCBottomRefreshControl'
+pod 'SKPhotoBrowser'
+pod 'BRYXBanner'
+pod 'SCLAlertView'
+pod 'Fabric'
+pod 'Crashlytics'
+pod 'BulletinBoard', :git => 'https://github.com/alexaubry/BulletinBoard.git'
+```
 
 # Next steps
 
