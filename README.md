@@ -32,8 +32,8 @@ What is Extension? It's addition to existing Swift classes, that allows to do mo
     - `localized` - returnes localized string value. Just call `myString.localized` instead of `NSLocalizedString(myString, tableName: tableName, bundle: Bundle.main, value: value, comment: comment)`;
     - `trimmed` - removes whitespaces from string. Just call `myString.trimmed` instead of `myString.trimmingCharacters(in: .whitespaces)`;
     - `substring` - cuts string to needed range;
-    - `urlencoded` - returns url-encoded string. Just call 'myString.urlencoded' instead of 'myString.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)';
-    - `withoutHTMLTags` - removes all HTML-tags from string. Just call 'myString.withoutHTMLTags' instead of `myString.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil)`;
+    - `urlencoded` - returns url-encoded string. Just call `myString.urlencoded` instead of `myString.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)`;
+    - `withoutHTMLTags` - removes all HTML-tags from string. Just call `myString.withoutHTMLTags` instead of `myString.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil)`;
     - `getAttributedStringFromHTML` - function that allows to convert html-string to attributed string for displaying with needed attributes.
     - `+` allows easily concatanate to string or attributed strings. Just call `output = string1 + string2`;
     - `setAsLink` function sets as clickable link needed part of attribute string.
