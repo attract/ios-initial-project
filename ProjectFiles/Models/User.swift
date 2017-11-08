@@ -8,13 +8,13 @@
 
 import Foundation
 
-class User : NSObject, NSCoding {
-    var sampleField: Any?
+class User: NSObject, Codable {
+    var sampleField: String?
     // TODO: add all model fields here
     
     class func shared() -> User {
         let defaults = UserDefaults.standard
-        let userObject = defaults.object(forKey: "userDict")
+        let userObject = defaults.data(forKey: "userDict")
         
         var instance = User()
         guard userObject != nil else {
@@ -22,40 +22,32 @@ class User : NSObject, NSCoding {
             return instance
         }
         
-        instance = NSKeyedUnarchiver.unarchiveObject(with: userObject as! Data) as! User
+        do {
+            instance = try JSONDecoder().decode(User.self, from: userObject!)
+        } catch let jsonError {
+            print("can't decode user object: \(jsonError.localizedDescription)")
+        }
+        
         return instance
-    }
-    
-    class func isAuthenticated() -> Bool {
-        return true // change it to needed condition
     }
     
     override init() {
         super.init()
     }
     
-    init(from dict:[String:AnyObject]) {
-        super.init()
-        
-        self.sampleField = dict[Constants.backend.fieldNames.api_example_field_name]
-        // TODO: add all model fields here
+    class func isAuthenticated() -> Bool {
+        return true // change it to needed condition
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        self.sampleField = aDecoder.decodeObject(forKey: Constants.backend.fieldNames.api_example_field_name)
-        // TODO: add all model fields here
-    }
-    
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.sampleField, forKey: Constants.backend.fieldNames.api_example_field_name)
-        // TODO: add all model fields here
-    }
-    
-    func saveUser() {
-        let savingUser = self
-        let encodedUser = NSKeyedArchiver.archivedData(withRootObject: savingUser)
-        let defaults = UserDefaults.standard
-        defaults.setValue(encodedUser, forKey: "userDict")
+    func saveUser() -> Bool {
+        do {
+            let data = try JSONEncoder().encode(self)
+            UserDefaults.standard.set(data, forKey: "userDict")
+            
+            return true
+        } catch {
+            return false
+        }
     }
     
     func cleanInfo() {
@@ -64,21 +56,5 @@ class User : NSObject, NSCoding {
         
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "userDict")
-    }
-    
-    func createUser(with dict: Dictionary <String, AnyObject>) {
-        self.sampleField = dict[Constants.backend.fieldNames.api_example_field_name]
-        
-        saveUser()
-    }
-    
-    class func buildUsers(from array: [[String:AnyObject]]) -> [User] {
-        var users: [User] = []
-        
-        for item in array {
-            users.append(User(from: item))
-        }
-        
-        return users
     }
 }

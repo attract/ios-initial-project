@@ -50,12 +50,12 @@ extension String {
     func getAttributedStringFromHTML(originalFont: Bool = false, fontSize: CGFloat = 15) -> NSAttributedString {
         if let data = self.data(using: .utf8) {
             do {
-                let attributedString = try NSMutableAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute:String.Encoding.utf8.rawValue], documentAttributes: nil)
+                let attributedString = try NSMutableAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType:NSAttributedString.DocumentType.html,NSAttributedString.DocumentReadingOptionKey.characterEncoding:String.Encoding.utf8.rawValue], documentAttributes: nil)
                 
                 if originalFont == false {
                     let font: UIFont = UIFont.systemFont(ofSize: 15)
                     
-                    attributedString.addAttributes([NSFontAttributeName:font], range: NSRange.init(location: 0, length: attributedString.length))
+                    attributedString.addAttributes([NSAttributedStringKey.font:font], range: NSRange.init(location: 0, length: attributedString.length))
                 }
                 
                 return attributedString
@@ -83,7 +83,7 @@ extension NSMutableAttributedString {
         
         let foundRange = self.mutableString.range(of: textToFind)
         if foundRange.location != NSNotFound {
-            self.addAttribute(NSLinkAttributeName, value: linkURL, range: foundRange)
+            self.addAttribute(NSAttributedStringKey.link, value: linkURL, range: foundRange)
             return true
         }
         return false

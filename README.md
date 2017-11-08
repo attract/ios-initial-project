@@ -121,13 +121,11 @@ pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git
 pod 'ReachabilitySwift'
 pod 'DZNEmptyDataSet'
 pod 'SDWebImage', '~>3.8'
-pod 'CCBottomRefreshControl'
-pod 'SKPhotoBrowser'
-pod 'BRYXBanner'
-pod 'SCLAlertView'
+pod 'SKPhotoBrowser', '~> 5.0.0'
 pod 'Fabric'
 pod 'Crashlytics'
 pod 'BulletinBoard', :git => 'https://github.com/alexaubry/BulletinBoard.git'
+pod 'ParallaxHeader', '~> 2.0.0'
 ```
 
 # Next steps

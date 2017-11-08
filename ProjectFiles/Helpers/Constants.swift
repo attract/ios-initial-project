@@ -96,6 +96,11 @@ struct Constants {
                 static let warning = UIImage()
             }
         }
+        
+        struct parallaxHeader {
+            static let minimumHeight: CGFloat = 0
+            static let maximumHeight: CGFloat = 200
+        }
     }
     
     public enum ErrorType: String {

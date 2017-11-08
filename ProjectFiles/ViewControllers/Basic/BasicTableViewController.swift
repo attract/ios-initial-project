@@ -1,41 +1,44 @@
 //
-//  BasicViewController.swift
-//  
+//  BasicTableViewController.swift
+//  iClub
 //
-//  Created by Stanislav Makushov on 11.07.17.
+//  Created by Stanislav Makushov on 18/10/2017.
 //  Copyright © 2017 Stanislav Makushov. All rights reserved.
 //
 
 import UIKit
 import Reachability
 import BulletinBoard
-import ParallaxHeader
 
-class BasicViewController: UIViewController {
-
+class BasicTableViewController: UITableViewController {
+    
     let reachabilityManager = ReachabilityManager()
     let reachability = Reachability()!
     
-    var customNavigationBar: UINavigationBar? = nil
-    var customStatusBar: UIView? = nil
-    
-    var interactivePopGestureRecognizerDelegate: UIGestureRecognizerDelegate? = nil
+    var isLoadingMore: Bool = false
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     
     lazy var bulletinManager: BulletinManager = {
         
         let rootItem = PageBulletinItem(title: "title")
         return BulletinManager(rootItem: rootItem)
     }()
-
+    
+    func loadMoreItems() {
+        // should be overriden
+    }
+    
+    var shouldLoadMore: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     func beginConnectObserving(vc: BasicViewController) {
         NotificationCenter.default.addObserver(vc, selector: #selector(vc.reachabilityChanged),name: Notification.Name.reachabilityChanged, object:reachability)
         do {
@@ -50,7 +53,7 @@ class BasicViewController: UIViewController {
         reachabilityManager.stopObserving(delegate: self)
     }
     
-    @objc func reachabilityChanged(note: NSNotification) {
+    func reachabilityChanged(note: NSNotification) {
         
         let reachability = note.object as! Reachability
         
@@ -62,20 +65,20 @@ class BasicViewController: UIViewController {
     }
     
     func showAuthScreen() {
-        let storyboardName = "auth storyoard name"
+        let storyboardName = "Auth"
         
         if let vc = UIStoryboard(name: storyboardName, bundle: nil).instantiateInitialViewController() {
             UIApplication.shared.keyWindow?.rootViewController = vc
         }
     }
     
-    func logout() {
+    @objc   func logout() {
         User.shared().cleanInfo()
         self.showAuthScreen()
     }
-
+    
     func showMainScreen() {
-        let storyboardName = "main storyoard name"
+        let storyboardName = "Main"
         
         let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
         
@@ -96,103 +99,21 @@ class BasicViewController: UIViewController {
         return false
     }
     
-    func addParallaxHeader(to tableView: UITableView, view: UIView) {
-        tableView.parallaxHeader.view = view
-        tableView.parallaxHeader.height = Constants.UI.parallaxHeader.maximumHeight
-        tableView.parallaxHeader.minimumHeight = Constants.UI.parallaxHeader.minimumHeight
-        tableView.parallaxHeader.mode = .topFill
-        
-        if #available(iOS 11.0, *) {
-            // do nothing
-        } else {
-            var inset = tableView.contentInset
-            var offset = tableView.contentOffset
-            
-            offset.y -= UIApplication.shared.statusBarFrame.size.height
-            inset.top -= UIApplication.shared.statusBarFrame.size.height
-            tableView.contentOffset = offset
-            tableView.contentInset = inset
-        }
-    }
-    
-    func createCustomNavBar(title: String) {
-        if let navVC = self.navigationController {
-            let navigationBar = UINavigationBar()
-            
-            if #available(iOS 11.0, *) {
-                navVC.navigationItem.largeTitleDisplayMode = .never
-                navigationBar.prefersLargeTitles = false
-            }
-            
-            var frame: CGRect
-            let statusBarFrame = UIApplication.shared.statusBarFrame
-            
-            if navVC.isNavigationBarHidden {
-                if #available(iOS 11.0, *) {
-                    frame = CGRect(x: 0, y: statusBarFrame.size.height, width: self.view.frame.size.width, height: 44)
-                } else {
-                    frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 44 + statusBarFrame.size.height)
-                }
-            } else {
-                if #available(iOS 11.0, *) {
-                    frame = navVC.navigationBar.frame
-                } else {
-                    let statusBarFrame = UIApplication.shared.statusBarFrame
-                    frame = CGRect(x: 0, y: 0, width: navVC.navigationBar.frame.size.width, height: navVC.navigationBar.frame.size.height + statusBarFrame.size.height)
-                }
-            }
-            
-            navigationBar.frame = frame
-            navigationBar.setBackgroundImage(UIImage(), for: .default)
-            
-            let leftButton = UIBarButtonItem(image: #imageLiteral(resourceName: "back"), style: .plain, target: self, action: #selector(goBack))
-            
-            let navItem = UINavigationItem()
-            if #available(iOS 11.0, *) {
-                navItem.largeTitleDisplayMode = .never
-            }
-            navItem.leftBarButtonItem = leftButton
-            navItem.title = title
-            
-            let textAttributes = [NSAttributedStringKey.foregroundColor:UIColor.clear]
-            navigationBar.titleTextAttributes = textAttributes
-            
-            navigationBar.items = [navItem]
-            
-            navVC.setNavigationBarHidden(true, animated: true)
-            
-            self.interactivePopGestureRecognizerDelegate = navVC.interactivePopGestureRecognizer?.delegate
-            
-            navVC.interactivePopGestureRecognizer?.delegate = nil
-            
-            navigationBar.shadowImage = UIImage()
-            navigationBar.tintColor = UIColor.white
-            
-            self.view.addSubview(navigationBar)
-            
-            let statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
-            
-            statusBarView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: CGFloat.leastNonzeroMagnitude)
-            
-            self.customStatusBar = statusBarView
-            self.view.addSubview(statusBarView)
-            
-            self.customNavigationBar = navigationBar
-        }
-    }
-    
-    @objc func goBack() {
-        _ = self.navigationController?.popViewController(animated: true)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
+    }
+    
+    func addParallaxHeader(view: UIView) {
+        self.tableView.parallaxHeader.view = view
+        self.tableView.parallaxHeader.height = Constants.UI.parallaxHeader.maximumHeight
+        self.tableView.parallaxHeader.minimumHeight = Constants.UI.parallaxHeader.minimumHeight
+        self.tableView.parallaxHeader.mode = .fill
     }
 }
 
 // MARK: BasicControllerDelegate
 
-extension BasicViewController: BasicControllerDelegate {    
+extension BasicTableViewController: BasicControllerDelegate {
     func showErrorScreen(withType type: Constants.ErrorType, text: String? = nil, andRefreshAction action: @escaping () -> Void) {
         let errorText: String = text == nil ? (type == .noConnection ? "NoConnection".localized : "RequestError".localized) : text!
         
@@ -319,7 +240,7 @@ extension BasicViewController: BasicControllerDelegate {
 }
 
 // MARK: Alerter actions
-extension BasicViewController {
+extension BasicTableViewController {
     func showSuccess(title: String, description: String, image: UIImage? = nil, continueAction: (() -> Void)? = nil) {
         self.bulletinManager = Alerter.success(title: title, description: description, image: image, continueAction: continueAction)
         
@@ -369,3 +290,40 @@ extension BasicViewController {
         TapticEngine.shared.makeTapticFeedback(type)
     }
 }
+
+// MARK: Infinite scroll
+extension BasicTableViewController {
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if self.shouldLoadMore {
+            let currentOffset = scrollView.contentOffset.y
+            let maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height
+            let deltaOffset = maximumOffset - currentOffset
+            
+            if deltaOffset <= 0 {
+                if self.isLoadingMore == false {
+                    self.createBottomView()
+                    self.isLoadingMore = true
+                    activityIndicator.startAnimating()
+                    self.tableView.tableFooterView?.isHidden = false
+                    self.loadMoreItems()
+                }
+            }
+        }
+    }
+    
+    func createBottomView() {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 60))
+        self.activityIndicator.tintColor = UIColor.gray
+        self.activityIndicator.center = view.center
+        
+        self.tableView.tableFooterView?.addSubview(view)
+    }
+    
+    func stopBottomAnimation() {
+        self.tableView.reloadData()
+        self.isLoadingMore = false
+        self.activityIndicator.stopAnimating()
+        self.tableView.tableFooterView?.isHidden = true
+    }
+}
+

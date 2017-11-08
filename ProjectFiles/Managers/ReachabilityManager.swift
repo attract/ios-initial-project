@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReachabilitySwift
+import Reachability
 
 class ReachabilityManager: NSObject {
     
@@ -32,7 +32,7 @@ class ReachabilityManager: NSObject {
     }
     
     func beginObserving(delegate: UIViewController) {
-        NotificationCenter.default.addObserver(delegate, selector: #selector(self.reachabilityChanged),name: ReachabilityChangedNotification,object: reachability)
+        NotificationCenter.default.addObserver(delegate, selector: #selector(self.reachabilityChanged),name: Notification.Name.reachabilityChanged,object: reachability)
         do {
             try reachability.startNotifier()
             print("Start observing")
@@ -41,11 +41,11 @@ class ReachabilityManager: NSObject {
         }
     }
     
-    func reachabilityChanged(note: NSNotification) {
+    @objc func reachabilityChanged(note: NSNotification) {
         
         let reachability = note.object as! Reachability
         
-        if reachability.isReachable {
+        if reachability.connection != .none {
             
         } else {
             
@@ -55,6 +55,6 @@ class ReachabilityManager: NSObject {
     func stopObserving(delegate: UIViewController) {
         reachability.stopNotifier()
         print("Stop observing")
-        NotificationCenter.default.removeObserver(delegate, name: ReachabilityChangedNotification, object: reachability)
+        NotificationCenter.default.removeObserver(delegate, name: Notification.Name.reachabilityChanged, object: reachability)
     }
 }
